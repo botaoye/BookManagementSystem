@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% set active_page = "search_book" %}
+{% block head %}{% endblock %}
+
+{% block content %}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+  <!-- Page Heading -->
+  <h1 class="h3 mb-2 text-gray-800">图书查询</h1>
+
+  <div class="card mb-4 py-3 border-left-primary">
+    <div class="card-body">
+      <form class="form-inline" id="search_book_form">
+        <label class="my-1 mr-2" for="search_book_method_selector">搜索方式</label>
+        <select class="custom-select my-1 mr-sm-2" id="search_book_method_selector">
+          <option value="book_name">书名</option>
+          <option value="author">作者</option>
+          <option value="class_name">类别</option>
+          <option value="isbn">ISBN</option>
+        </select>
+
+        <div class="input-group">
+          <input type="text" class="form-control bg-light border-0 small" placeholder="" aria-label="Search"
+            aria-describedby="basic-addon2" id="search_book_input">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button" id="search_book_button">
+              <i class="fas fa-search fa-sm"></i>
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="alert alert-warning alert-dismissible fade show" role="alert" id="search_book_alert">
+        <strong>Holy guacamole!</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">图书查询结果</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>ISBN</th>
+              <th>书名</th>
+              <th>出版社</th>
+              <th>作者</th>
+              <th>类别</th>
+              <th>馆藏数量</th>
+              <th>可借数量</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>ISBN</th>
+              <th>书名</th>
+              <th>出版社</th>
+              <th>作者</th>
+              <th>类别</th>
+              <th>馆藏数量</th>
+              <th>可借数量</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- /.container-fluid -->
+
+{% endblock %}
+
+{% block script %}
+<script>
+  // Call the dataTables jQuery plugin
+  $(document).ready(function () {
+    $('#search_book_button').on('click', function () {
+      var form = new FormData(document.getElementById("search_book_form"));
+      if ($('#search_book_input').val() === "") {
+        console.log("请输入查询内容！")
+      }
+      else {
+        $.ajax({
+          url: "{{ url_for('search_book') }}",
+          type: "post",
+          data: form,
+          processData: false,
+          contentType: false,
+          success: function (data) {
+            if (data.length !== 0) {
+              $('#dataTable').DataTable({
+                "ajax": data,
+                "columns": [
+                  { "data": "isbn" },
+                  { "data": "book_name" },
+                  { "data": "press" },
+                  { "data": "author" },
+                  { "data": "class_name" },
+                  { "data": "count" },
+                  { "data": "available" }
+                ]
+              });
+            }
+            else {
+              console.log("未找到记录！")
+            }
+          }
+        });
+      }
+      return false;
+    })
+  });
+
+
+
+</script>
+{% endblock %}

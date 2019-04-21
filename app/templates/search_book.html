@@ -14,7 +14,7 @@
     <div class="card-body">
       <form class="form-inline" id="search_book_form">
         <label class="my-1 mr-2" for="search_book_method_selector">搜索方式</label>
-        <select class="custom-select my-1 mr-sm-2" id="search_book_method_selector">
+        <select class="custom-select my-1 mr-sm-2" id="search_book_method_selector" name="search_book_method_selector">
           <option value="book_name">书名</option>
           <option value="author">作者</option>
           <option value="class_name">类别</option>
@@ -23,7 +23,7 @@
 
         <div class="input-group">
           <input type="text" class="form-control bg-light border-0 small" placeholder="" aria-label="Search"
-            aria-describedby="basic-addon2" id="search_book_input">
+            aria-describedby="basic-addon2" id="search_book_input" name="content">
           <div class="input-group-append">
             <button class="btn btn-primary" type="button" id="search_book_button">
               <i class="fas fa-search fa-sm"></i>
@@ -33,12 +33,6 @@
 
       </form>
 
-      <div class="alert alert-warning alert-dismissible fade show" role="alert" id="search_book_alert">
-        <strong>Holy guacamole!</strong>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
     </div>
   </div>
 
@@ -87,6 +81,8 @@
 <script>
   // Call the dataTables jQuery plugin
   $(document).ready(function () {
+    $('#dataTable').DataTable();
+
     $('#search_book_button').on('click', function () {
       var form = new FormData(document.getElementById("search_book_form"));
       if ($('#search_book_input').val() === "") {
@@ -100,23 +96,19 @@
           processData: false,
           contentType: false,
           success: function (data) {
-            if (data.length !== 0) {
-              $('#dataTable').DataTable({
-                "ajax": data,
-                "columns": [
-                  { "data": "isbn" },
-                  { "data": "book_name" },
-                  { "data": "press" },
-                  { "data": "author" },
-                  { "data": "class_name" },
-                  { "data": "count" },
-                  { "data": "available" }
-                ]
-              });
-            }
-            else {
-              console.log("未找到记录！")
-            }
+            $('#dataTable').DataTable({
+              data: data,
+              destroy: true,
+              columns: [
+                { "data": "isbn" },
+                { "data": "book_name" },
+                { "data": "press" },
+                { "data": "author" },
+                { "data": "class_name" },
+                { "data": "count" },
+                { "data": "available" }
+              ]
+            });
           }
         });
       }

@@ -1,10 +1,11 @@
-from app import db
-from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
+import datetime
+from app import db, login
+from flask_login import UserMixin
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     user_id = db.Column(db.String(6), primary_key=True)
-    user_name = db.Column(db.String(32))
+    user_name = db.Column(db.String(32), unique=True)
     password = db.Column(db.String(24))
     privilidge = db.Column(db.String(1))  # 用户权限（0 for super_admin, 1 for admin, 2 for reader）
 
@@ -27,11 +28,14 @@ class User(UserMixin, db.Model):
         return '<User %r>' % self.user_name
 
 
-class Admin(UserMixin, db.Model):
-    __tablename__ = 'admin'
+class AdminUser(db.Model):
+    __tablename__ = 'adminuser'
     admin_id = db.Column(db.ForeignKey('user.user_id'), primary_key=True)
     admin_name = db.Column(db.String(32))
     privilidge = db.Column(db.String(1))  # 用户权限（0 for super_admin, 1 for admin）
+
+    def __repr__(self):
+        return '<AdminUser %r>' % self.admin_name
 
 
 # 图书管理数据表
@@ -69,7 +73,7 @@ class Inventory(db.Model):
     storage_date = db.Column(db.Date)
     location = db.Column(db.String(32))
     status = db.Column(db.Boolean, default=True)  # 是否在馆
-    admin = db.Column(db.ForeignKey('admin.admin_id'))  # 入库操作员
+    admin = db.Column(db.ForeignKey('adminuser.admin_id'))  # 入库操作员
 
     def __repr__(self):
         return '<Inventory %r>' % self.barcode
@@ -79,11 +83,18 @@ class ReadBook(db.Model):
     __tablename__ = 'readbook'
     operation_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     barcode = db.Column(db.ForeignKey('inventory.barcode'), index=True)
-    card_id = db.Column(db.ForeignKey('librarycard.card_id'), index=True)
     borrow_user = db.Column(db.ForeignKey('user.user_id'))  # 借书者
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date, nullable=True)
     due_date = db.Column(db.Date)  # 应还日期
 
+    def change_end_date(self):
+        self.end_date = str(datetime.date.today())
+
     def __repr__(self):
         return '<ReadBook %r>' % self.operation_id
+
+
+@login.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)

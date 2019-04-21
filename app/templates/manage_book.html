@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% set active_page = "manage_book" %}
+{% block head %}{% endblock %}
+
+{% block content %}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">图书管理</h1>
+
+    <div class="card mb-4 py-3 border-left-primary">
+        <div class="card-body">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#post_record_modal"
+                id="add_button">
+                添加记录
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="post_record_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">编辑</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form" id="form_data">
+
+                        <div class="form-group row">
+                            <label for="barcode" class="col-sm-2 col-form-label">条形码</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="barcode" name="barcode"
+                                    placeholder="请输入条形码">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="isbn" class="col-sm-2 col-form-label">ISBN</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="isbn" name="isbn" placeholder="请输入ISBN">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="storage_date" class="col-sm-2 col-form-label">入库时间</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="storage_date" name="storage_date"
+                                    placeholder="YYYY-MM-DD">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="location" class="col-sm-2 col-form-label">地址</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="location" name="location"
+                                    placeholder="请输入地址">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="admin" class="col-sm-2 col-form-label">操作员</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="admin" name="admin" placeholder="请输入操作员id">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="book_name" class="col-sm-2 col-form-label">书名</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="book_name" name="book_name"
+                                    placeholder="请输入书名">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="author" class="col-sm-2 col-form-label">作者</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="author" name="author" placeholder="请输入作者">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="press" class="col-sm-2 col-form-label">出版社</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="press" name="press" placeholder="请输入出版社">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="class_name" class="col-sm-2 col-form-label">类别</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="class_name" name="class_name"
+                                    placeholder="请输入图书类别">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="status" class="col-sm-2 col-form-label">是否在库</label>
+                            <select class="form-control" id="status" name="status">
+                                <option value="1">是</option>
+                                <option value="0">否</option>
+
+                            </select>
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="save_button">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">图书列表</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>条形码</th>
+                            <th>ISBN</th>
+                            <th>入库时间</th>
+                            <th>库存地址</th>
+                            <th>是否在库</th>
+                            <th>入库管理员</th>
+                            <th>删除</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<!-- /.container-fluid -->
+
+{% endblock %}
+
+{% block script %}
+<script>
+    // Call the dataTables jQuery plugin
+    $(document).ready(function () {
+
+        var tables = $('#dataTable').DataTable();
+        refresh_table();
+
+        $('#save_button').on('click', function () {
+            var form = new FormData(document.getElementById("form_data"));
+            $.ajax({
+                url: "{{ url_for('manage_book') }}",
+                type: "post",
+                data: form,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    refresh_table();
+                    alert("修改成功");
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        })
+    });
+
+    function refresh_table() {
+        $.ajax({
+            url: "{{ url_for('get_all_book') }}",
+            type: "get",
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log(data);
+                tables = $('#dataTable').DataTable({
+                    data: data,
+                    destroy: true,
+                    columns: [
+                        { "data": "barcode" },
+                        { "data": "isbn" },
+                        { "data": "storage_date" },
+                        { "data": "location" },
+                        { "data": "status" },
+                        { "data": "admin" },
+                        { "data": null }
+                    ],
+                    columnDefs: [{
+                        "targets": -1,//删除
+                        "data": null,
+                        "defaultContent": "<button id='delrow' class='btn btn-primary' type='button'><i class='fa fa-trash'></i></button>"
+                    },
+                    ]
+                });
+            }
+        });
+    }
+
+
+    // 数据删除
+    $('#dataTable tbody').on('click', 'button#delrow', function () {
+        var data = tables.row($(this).parents('tr')).data();
+        console.log(data['barcode']);
+        $.ajax({
+            url: "{{ url_for('delete_book') }}",
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (data) {
+                refresh_table();
+                alert("删除成功");
+            },
+            error: function () {
+                alert("error");
+            }
+        })
+    });
+
+</script>
+{% endblock %}

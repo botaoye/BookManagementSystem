@@ -10,6 +10,7 @@
   <meta name="author" content="">
 
   <title>Book Management System</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
 
   <!-- Custom fonts for this template-->
   <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet"
@@ -70,15 +71,15 @@
       </li>
 
       <!-- Nav Item - Charts -->
-      <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+      <li class="nav-item {{ 'active' if active_page == 'borrow_book' else '' }}">
+        <a class="nav-link" href="borrow_book">
           <i class="fas fa-fw fa-wrench"></i>
           <span>图书借阅</span></a>
       </li>
 
       <!-- Nav Item - Charts -->
-      <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+      <li class="nav-item {{ 'active' if active_page == 'return_book' else '' }}" >
+        <a class="nav-link" href="return_book">
           <i class="fas fa-fw fa-wrench"></i>
           <span>图书归还</span></a>
       </li>
@@ -92,22 +93,22 @@
       </div>
 
       <!-- Nav Item - Charts -->
-      <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+      <li class="nav-item {{ 'active' if active_page == 'manage_library_card' else '' }}">
+        <a class="nav-link" href="manage_library_card">
           <i class="fas fa-fw fa-chart-area"></i>
           <span>借书证管理</span></a>
       </li>
 
       <!-- Nav Item - Charts -->
-      <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+      <li class="nav-item {{ 'active' if active_page == 'manage_book' else '' }}">
+        <a class="nav-link" href="manage_book">
           <i class="fas fa-fw fa-chart-area"></i>
           <span>图书管理</span></a>
       </li>
 
       <!-- Nav Item - Charts -->
-      <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+      <li class="nav-item {{ 'active' if active_page == 'manage_admin' else '' }}">
+        <a class="nav-link" href="manage_admin">
           <i class="fas fa-fw fa-chart-area"></i>
           <span>管理员管理</span></a>
       </li>
@@ -182,27 +183,14 @@
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
-                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ current_user.user_name }}</span>
+                <img class="img-profile rounded-circle" src="{{url_for('static', filename='img/profile_picture.jpeg')}}">
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Profile
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Settings
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Activity Log
-                </a>
-                <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Logout
+                  登出
                 </a>
               </div>
             </li>
@@ -245,15 +233,15 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <h5 class="modal-title" id="exampleModalLabel">确认离开?</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
         </div>
-        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-body">点击“登出”退出当前用户。</div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+          <a class="btn btn-primary" href="logout">登出</a>
         </div>
       </div>
     </div>

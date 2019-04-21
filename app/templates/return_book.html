@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% set active_page = "return_book" %}
+{% block head %}{% endblock %}
+
+{% block content %}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">图书借阅列表</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>操作流水号</th>
+                            <th>图书条形码</th>
+                            <th>ISBN</th>
+                            <th>书名</th>
+                            <th>借出日期</th>
+                            <th>到期时间</th>
+                            <th>归还日期</th>
+                            <th>归还</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<!-- /.container-fluid -->
+
+{% endblock %}
+
+{% block script %}
+<script>
+    // Call the dataTables jQuery plugin
+    $(document).ready(function () {
+
+        var tables = $('#dataTable').DataTable();
+        refresh_table();
+
+    });
+
+    function refresh_table() {
+        $.ajax({
+            url: "{{ url_for('get_all_borrow_history') }}",
+            type: "get",
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                tables = $('#dataTable').DataTable({
+                    data: data,
+                    destroy: true,
+                    columns: [
+                        { "data": "operation_id" },
+                        { "data": "barcode" },
+                        { "data": "isbn" },
+                        { "data": "book_name" },
+                        { "data": "start_date" },
+                        { "data": "due_date" },
+                        { "data": "end_date" },
+                        { "data": null }
+                    ],
+                    columnDefs: [{
+                        "targets": -1,//删除
+                        "data": null,
+                        "defaultContent": "<button id='delrow' class='btn btn-primary' type='button'><i class='fa fa-check'></i></button>"
+                    }
+                    ],
+                    fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                        console.log(nRow);
+                        console.log($(nRow).find('button'));
+                        if (!aData['end_date']) {
+                            console.log("not return");
+                        }
+                        else {
+                            $(nRow).find('button').attr('disabled','disabled');
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+    // 归还
+    $('#dataTable tbody').on('click', 'button#delrow', function () {
+        var data = tables.row($(this).parents('tr')).data();
+        $.ajax({
+            url: "{{ url_for('return_book') }}",
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (data) {
+                refresh_table();
+                alert("归还成功");
+            },
+            error: function () {
+                alert("error");
+            }
+        })
+    });
+
+</script>
+{% endblock %}

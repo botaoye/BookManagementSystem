@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% set active_page = "manage_admin" %}
+{% block head %}{% endblock %}
+
+{% block content %}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">管理员管理</h1>
+
+    <div class="card mb-4 py-3 border-left-primary">
+        <div class="card-body">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#post_record_modal"
+                id="add_button">
+                添加管理员
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="post_record_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">编辑</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form" id="form_data">
+
+                        <div class="form-group row">
+                            <label for="admin_id" class="col-sm-2 col-form-label">ID</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="admin_id" name="admin_id"
+                                    placeholder="请输入管理员ID">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                                <label for="admin_name" class="col-sm-2 col-form-label">姓名</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="admin_name" name="admin_name"
+                                        placeholder="请输入管理员姓名">
+                                </div>
+                            </div>
+                        
+                        <div class="form-group row">
+                            <label for="privilidge" class="col-sm-2 col-form-label">权限等级</label>
+                            <select class="form-control" id="privilidge" name="privilidge">
+                                <option value="0">超级管理员</option>
+                                <option value="1">普通管理员</option>
+
+                            </select>
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="save_button">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">管理员列表</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>姓名</th>
+                            <th>权限（0：超级管理，1：普通管理）</th>
+                            <th>删除</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<!-- /.container-fluid -->
+
+{% endblock %}
+
+{% block script %}
+<script>
+    // Call the dataTables jQuery plugin
+    $(document).ready(function () {
+
+        var tables = $('#dataTable').DataTable();
+        refresh_table();
+
+        $('#save_button').on('click', function () {
+            var form = new FormData(document.getElementById("form_data"));
+            $.ajax({
+                url: "{{ url_for('manage_admin') }}",
+                type: "post",
+                data: form,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    refresh_table();
+                    alert(data);
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        })
+    });
+
+    function refresh_table() {
+        $.ajax({
+            url: "{{ url_for('get_all_admin') }}",
+            type: "get",
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log(data);
+                tables = $('#dataTable').DataTable({
+                    data: data,
+                    destroy: true,
+                    columns: [
+                        { "data": "admin_id" },
+                        { "data": "admin_name" },
+                        { "data": "privilidge" },
+                        { "data": null }
+                    ],
+                    columnDefs: [{
+                        "targets": -1,//删除
+                        "data": null,
+                        "defaultContent": "<button id='delrow' class='btn btn-primary' type='button'><i class='fa fa-trash'></i></button>"
+                    },
+                    ]
+                });
+            }
+        });
+    }
+
+
+    // 数据删除
+    $('#dataTable tbody').on('click', 'button#delrow', function () {
+        var data = tables.row($(this).parents('tr')).data();
+        console.log(data['admin_id']);
+        $.ajax({
+            url: "{{ url_for('delete_admin') }}",
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (data) {
+                refresh_table();
+                alert("删除成功");
+            },
+            error: function () {
+                alert("error");
+            }
+        })
+    });
+
+</script>
+{% endblock %}

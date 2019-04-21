@@ -49,11 +49,11 @@
       <hr class="sidebar-divider my-0">
 
       <!-- Nav Item - Dashboard -->
-      <li class="nav-item {{ 'active' if active_page == 'index' else '' }}">
-        <a class="nav-link" href="index">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>个人信息</span></a>
-      </li>
+      <li class="nav-item {{ 'active' if active_page == 'search_book' else '' }}">
+          <a class="nav-link" href="search_book">
+            <i class="fa fa-search"></i>
+            <span>图书查询</span></a>
+        </li>
 
       <!-- Divider -->
       <hr class="sidebar-divider">
@@ -64,22 +64,15 @@
       </div>
 
       <!-- Nav Item - Charts -->
-      <li class="nav-item {{ 'active' if active_page == 'search_book' else '' }}">
-        <a class="nav-link" href="search_book">
-          <i class="fas fa-fw fa-wrench"></i>
-          <span>图书查询</span></a>
-      </li>
-
-      <!-- Nav Item - Charts -->
       <li class="nav-item {{ 'active' if active_page == 'borrow_book' else '' }}">
-        <a class="nav-link" href="borrow_book">
+        <a class="nav-link {{ 'disabled' if current_user.privilidge != '2' else '' }}" href="borrow_book">
           <i class="fas fa-fw fa-wrench"></i>
           <span>图书借阅</span></a>
       </li>
 
       <!-- Nav Item - Charts -->
       <li class="nav-item {{ 'active' if active_page == 'return_book' else '' }}" >
-        <a class="nav-link" href="return_book">
+        <a class="nav-link {{ 'disabled' if current_user.privilidge != '2' else '' }}" href="return_book">
           <i class="fas fa-fw fa-wrench"></i>
           <span>图书归还</span></a>
       </li>
@@ -94,22 +87,22 @@
 
       <!-- Nav Item - Charts -->
       <li class="nav-item {{ 'active' if active_page == 'manage_library_card' else '' }}">
-        <a class="nav-link" href="manage_library_card">
-          <i class="fas fa-fw fa-chart-area"></i>
+        <a class="nav-link {{ 'disabled' if current_user.privilidge == '2' else '' }}" href="manage_library_card">
+          <i class="fa fa-id-card"></i>
           <span>借书证管理</span></a>
       </li>
 
       <!-- Nav Item - Charts -->
       <li class="nav-item {{ 'active' if active_page == 'manage_book' else '' }}">
-        <a class="nav-link" href="manage_book">
-          <i class="fas fa-fw fa-chart-area"></i>
+        <a class="nav-link {{ 'disabled' if current_user.privilidge == '2' else '' }}" href="manage_book">
+          <i class="fa fa-book"></i>
           <span>图书管理</span></a>
       </li>
 
       <!-- Nav Item - Charts -->
       <li class="nav-item {{ 'active' if active_page == 'manage_admin' else '' }}">
-        <a class="nav-link" href="manage_admin">
-          <i class="fas fa-fw fa-chart-area"></i>
+        <a class="nav-link {{ 'disabled' if current_user.privilidge != '0' else '' }}" href="manage_admin">
+          <i class="fa fa-user"></i>
           <span>管理员管理</span></a>
       </li>
 
@@ -137,19 +130,6 @@
           <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
             <i class="fa fa-bars"></i>
           </button>
-
-          <!-- Topbar Search -->
-          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-            <div class="input-group">
-              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                aria-label="Search" aria-describedby="basic-addon2">
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="button">
-                  <i class="fas fa-search fa-sm"></i>
-                </button>
-              </div>
-            </div>
-          </form>
 
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">

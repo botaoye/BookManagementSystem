@@ -1,0 +1,26 @@
+version: "3"
+services:
+  app:
+    build: .
+    container_name: bookmanagementsystem
+    links:
+      - db
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+        DATABASE_URL: mysql+pymysql://book_management_system_user:test_password@db:3306/book_management_system_db
+
+  db:
+    image: mysql:5.7
+    ports:
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: book_management_system_db
+      MYSQL_USER: book_management_system_user
+      MYSQL_PASSWORD: test_password
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d/:ro
+      - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf

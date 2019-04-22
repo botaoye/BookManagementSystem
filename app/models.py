@@ -44,7 +44,7 @@ class Book(db.Model):
     isbn = db.Column(db.String(13), primary_key=True)
     book_name = db.Column(db.String(64))
     author = db.Column(db.String(64))
-    press = db.Column(db.String(32))
+    press = db.Column(db.String(64))
     class_name = db.Column(db.String(64))
 
     def __repr__(self):
@@ -55,7 +55,7 @@ class LibraryCard(db.Model):
     __tablename__ = 'librarycard'
     card_id = db.Column(db.ForeignKey('user.user_id'), primary_key=True)
     name = db.Column(db.String(32))
-    sex = db.Column(db.String(2))
+    sex = db.Column(db.String(8))
     telephone = db.Column(db.String(11), nullable=True)
     enroll_date = db.Column(db.Date)
     valid_date = db.Column(db.Date)

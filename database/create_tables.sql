@@ -18,14 +18,14 @@ CREATE TABLE IF NOT EXISTS book(
     isbn VARCHAR(13) PRIMARY KEY, 
 	book_name VARCHAR(64), 
 	author VARCHAR(64), 
-	press VARCHAR(32), 
+	press VARCHAR(64), 
 	class_name VARCHAR(64)
 )DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS librarycard(
 	card_id VARCHAR(8) PRIMARY KEY, 
 	name VARCHAR(32), 
-	sex VARCHAR(2), 
+	sex VARCHAR(8), 
 	telephone VARCHAR(11), 
 	enroll_date DATE NOT NULL, 
 	valid_date DATE NOT NULL, 
